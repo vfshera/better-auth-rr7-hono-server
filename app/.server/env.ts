@@ -53,6 +53,4 @@ if (error) {
   process.exit(1);
 }
 
-console.log("✅ Environment variables loaded!");
-
 export default env!;
