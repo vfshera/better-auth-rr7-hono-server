@@ -1,0 +1,128 @@
+{
+  "types": {
+    "prefix": ["rr-page-types", "rrpt"],
+    "body": ["import type { Route } from \"./+types/${TM_FILENAME_BASE}\""],
+    "description": "Imports a type definition for the route",
+    "scope": "typescript,typescriptreact"
+  },
+  "component": {
+    "prefix": ["rr-page", "rrp"],
+    "body": [
+      "export default function ${1:${TM_FILENAME_BASE}}() {",
+      "  return (",
+      "    <div>",
+      "      <h1>${1:first}</h1>",
+      "    </div>",
+      "  );",
+      "}"
+    ],
+    "description": "Creates a default export route component.",
+    "scope": "typescript,typescriptreact"
+  },
+  "loader": {
+    "prefix": ["rr-loader", "rrl"],
+    "body": [
+      "export async function loader({ request }: Route.LoaderArgs) {",
+      "  return { ${1:message}: ${2:\"Hello from Loader!\"} };",
+      "}"
+    ],
+    "description": "Creates a route loader function.",
+    "scope": "typescript,typescriptreact"
+  },
+  "clientLoader": {
+    "prefix": ["rr-client-loader", "rrcl"],
+    "body": [
+      "export async function clientLoader({ request }: Route.ClientLoaderArgs) {",
+      "  return { ${1:message}: ${2:\"Hello from Client Loader!\"} };",
+      "}",
+      "",
+      "clientLoader.hydrate = true as const;"
+    ],
+    "description": "Creates a route client loader with hydration.",
+    "scope": "typescript,typescriptreact"
+  },
+  "action": {
+    "prefix": ["rr-action", "rra"],
+    "body": [
+      "export async function action({ request }: Route.ActionArgs) {",
+      "  return { ok: true };",
+      "}"
+    ],
+    "description": "Creates a route action function.",
+    "scope": "typescript,typescriptreact"
+  },
+  "clientAction": {
+    "prefix": ["rr-client-action", "rrca"],
+    "body": [
+      "export async function clientAction({ serverAction }: Route.ClientActionArg) {",
+      "  const data = await serverAction();",
+      "  return data;",
+      "}"
+    ],
+    "description": "Creates a client-side route action function.",
+    "scope": "typescript,typescriptreact"
+  },
+  "errorBoundary": {
+    "prefix": ["rr-error-boundary", "rreb"],
+    "body": [
+      "export function ErrorBoundary() {",
+      "  const error = useRouteError();",
+      "  if (isRouteErrorResponse(error)) {",
+      "    return (",
+      "      <div>",
+      "        <h1>{error.status} {error.statusText}</h1>",
+      "        <p>{error.data}</p>",
+      "      </div>",
+      "    );",
+      "  } else if (error instanceof Error) {",
+      "    return (",
+      "      <div>",
+      "        <h1>Error</h1>",
+      "        <p>{error.message}</p>",
+      "        <pre>{error.stack}</pre>",
+      "      </div>",
+      "    );",
+      "  } else {",
+      "    return <h1>Unknown Error</h1>;",
+      "  }",
+      "}"
+    ],
+    "description": "Creates a route error boundary component.",
+    "scope": "typescript,typescriptreact"
+  },
+  "hydrateFallback": {
+    "prefix": ["rr-hydrate-fallback", "rrhf"],
+    "body": [
+      "export function HydrateFallback() {",
+      "  return <p>${1:Loading...}</p>;",
+      "}"
+    ],
+    "description": "Creates a HydrateFallback component.",
+    "scope": "typescript,typescriptreact"
+  },
+  "headers": {
+    "prefix": ["rr-headers", "rrh"],
+    "body": [
+      "export function headers() {",
+      "  return {",
+      "    \"${1:Header-Name}\": \"${2:HeaderValue}\",",
+      "    \"Cache-Control\": \"max-age=${3:300}, s-maxage=${4:3600}\"",
+      "  };",
+      "}"
+    ],
+    "description": "Defines HTTP headers for the route.",
+    "scope": "typescript,typescriptreact"
+  },
+  "meta": {
+    "prefix": ["rr-meta", "rrm"],
+    "body": [
+      "export function meta({ location }: Route.MetaArgs) {",
+      "  return [",
+      "    { title: \"${1:Page Title}\" },",
+      "    { name: \"description\", content: \"${2:Page description}\" }",
+      "  ];",
+      "}"
+    ],
+    "description": "Defines meta tags for the route."
+  }
+}
