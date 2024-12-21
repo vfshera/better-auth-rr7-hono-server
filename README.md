@@ -7,6 +7,7 @@ Whats implemented:
 - Email Password Login | [Docs](https://www.better-auth.com/docs/authentication/email-password)
 - Social/OAuth Login with Github | [Docs](https://www.better-auth.com/docs/authentication/github)
 - Simple UI with [shadcn ui](https://ui.shadcn.com/) and [Tailwind CSS](https://tailwindcss.com/)
+- [Hono Server](https://hono.dev/) allows for middleware and lots of backend functionality.
 
 Libraries used:
 
@@ -57,4 +58,5 @@ Make sure to deploy the output of `npm run build`
 │   ├── client/    # Static assets
 │   └── server/    # Server-side code
 ```
+
 License [MIT](./LICENSE)
