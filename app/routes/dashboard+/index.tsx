@@ -1,5 +1,5 @@
 import type { Route } from "./+types/index";
-export function meta({ location }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [{ title: "Dashboard" }];
 }
 

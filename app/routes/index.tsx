@@ -18,7 +18,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <div className="grid text-center h-screen items-center p-8">
       <div className="space-y-10">
-        <h1 className="text-4xl">React Router 7 + Better Auth</h1>
+        <div>
+          <h1 className="text-4xl">React Router 7 + Better Auth</h1>
+          <p className="text-lg">With Hono Server</p>
+        </div>
         <div className="flex justify-center gap-4 max-w-[600px] mx-auto">
           {loaderData.userName ? (
             <div className="flex flex-col gap-5">
