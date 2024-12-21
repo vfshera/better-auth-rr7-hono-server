@@ -7,6 +7,7 @@ import { Input } from "~/components/ui/input";
 import { authClient } from "~/lib/auth.client";
 import { signupSchema, type SignupSchemaType } from "~/schemas/auth.schema";
 import type { Route } from "./+types/signup";
+import { AUTHENTICATED_REDIRECT } from "~/utils/constants";
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Sign Up" }];
 }
@@ -25,7 +26,7 @@ export default function SignUp() {
   const signUp = async ({ confirmPassword, ...data }: SignupSchemaType) => {
     await authClient.signUp.email(data, {
       onSuccess: (ctx) => {
-        navigate("/dashboard");
+        navigate(AUTHENTICATED_REDIRECT);
       },
       onError: (ctx) => {
         toast.error(ctx.error.message);

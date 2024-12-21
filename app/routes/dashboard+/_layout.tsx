@@ -29,6 +29,7 @@ import {
 import type { Route } from "./+types/_layout";
 import { requireAuth } from "~/.server/auth/utils";
 import { authClient } from "~/lib/auth.client";
+import { SIGNOUT_REDIRECT } from "~/utils/constants";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const { user } = await requireAuth(request);
@@ -73,7 +74,7 @@ export default function DashboardLayout({
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          navigate("/");
+          navigate(SIGNOUT_REDIRECT);
         },
       },
     });

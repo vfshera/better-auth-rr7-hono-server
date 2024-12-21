@@ -8,10 +8,12 @@ import { loginSchema, type LoginSchemaType } from "~/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import type { Route } from "./+types/signin";
+import { AUTHENTICATED_REDIRECT } from "~/utils/constants";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Sign In" }];
 }
+
 export default function SignIn() {
   const {
     register,
@@ -27,7 +29,7 @@ export default function SignIn() {
   const signIn = async (credentials: LoginSchemaType) => {
     await authClient.signIn.email(credentials, {
       onSuccess: (ctx) => {
-        navigate("/dashboard");
+        navigate(AUTHENTICATED_REDIRECT);
       },
       onError: (ctx) => {
         toast.error(ctx.error.message);
@@ -38,10 +40,10 @@ export default function SignIn() {
   const handleGithubSignIn = async () => {
     await authClient.signIn.social({
       provider: "github",
-      callbackURL: "/dashboard",
+      callbackURL: AUTHENTICATED_REDIRECT,
       fetchOptions: {
         onSuccess: (ctx) => {
-          navigate("/dashboard");
+          navigate(AUTHENTICATED_REDIRECT);
         },
         onError: (ctx) => {
           toast.error(ctx.error.message);
