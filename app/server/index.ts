@@ -27,7 +27,15 @@ export default await createHonoServer<AppBindings>({
     /**
      * Add auth guards
      */
-    server.use(protect({ publicPaths: ["/", "/signin", "/signup"] }));
+    server.use(
+      protect({
+        protectedPaths: [
+          "/protected",
+          "/dashboard",
+          "/dashboard/*path", // *path is a wildcard that will match any path after /dashboard
+        ],
+      })
+    );
   },
   getLoadContext(ctx) {
     return {

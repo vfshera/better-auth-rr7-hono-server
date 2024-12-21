@@ -26,21 +26,21 @@ function pathMatch(paths: string[], requestPath: string) {
 /**
  * Protected routes middleware
  *
- * @param options.publicPath - The public paths
+ * @param options.protectedPaths - The protected paths
  * @param options.onFailRedirectTo - The path to redirect to if the user is not logged in
  *
  */
 export function protect({
-  publicPaths,
+  protectedPaths,
   onFailRedirectTo = UNAUTHENTICATED_REDIRECT,
 }: {
-  publicPaths: string[];
+  protectedPaths: string[];
   onFailRedirectTo?: string;
 }) {
   return createMiddleware<AppBindings>(async (ctx, next) => {
-    const isPublic = pathMatch(publicPaths, ctx.req.path);
+    const isProtected = pathMatch(protectedPaths, ctx.req.path);
 
-    if (isPublic) {
+    if (!isProtected) {
       return next();
     }
 
