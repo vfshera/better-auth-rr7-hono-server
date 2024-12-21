@@ -47,8 +47,11 @@ export function protect({
     const isAuthenticated = ctx.get("isAuthenticated");
 
     if (!isAuthenticated) {
+      const url = new URL(ctx.req.url);
       return ctx.redirect(
-        `${onFailRedirectTo}?${REDIRECT_PATH_PARAM}=${ctx.req.path}`
+        `${onFailRedirectTo}?${REDIRECT_PATH_PARAM}=${encodeURI(
+          url.pathname + url.search
+        )}`
       );
     }
 
