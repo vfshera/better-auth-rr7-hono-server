@@ -1,17 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Form, Link, useNavigate } from "react-router";
+import { Form, Link, useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { authClient } from "~/lib/auth.client";
 import { signupSchema, type SignupSchemaType } from "~/schemas/auth.schema";
-import type { Route } from "./+types/signup";
-import { AUTHENTICATED_REDIRECT } from "~/utils/constants";
-export function meta({}: Route.MetaArgs) {
+import { generateLinkWithRedirectTo } from "~/utils";
+import { AUTHENTICATED_REDIRECT, REDIRECT_PATH_PARAM } from "~/utils/constants";
+export function meta() {
   return [{ title: "Sign Up" }];
 }
 export default function SignUp() {
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get(REDIRECT_PATH_PARAM);
+
   const {
     register,
     handleSubmit,
@@ -25,8 +28,8 @@ export default function SignUp() {
 
   const signUp = async ({ confirmPassword, ...data }: SignupSchemaType) => {
     await authClient.signUp.email(data, {
-      onSuccess: (ctx) => {
-        navigate(AUTHENTICATED_REDIRECT);
+      onSuccess: () => {
+        navigate(redirectTo || AUTHENTICATED_REDIRECT);
       },
       onError: (ctx) => {
         toast.error(ctx.error.message);
@@ -113,7 +116,10 @@ export default function SignUp() {
 
         <p className="mt-4 text-center font-normal text-gray-600">
           Already registered?{" "}
-          <Link to="/signin" className="font-medium text-gray-900">
+          <Link
+            to={generateLinkWithRedirectTo("/signin", redirectTo)}
+            className="font-medium text-gray-900"
+          >
             Sign in
           </Link>
         </p>

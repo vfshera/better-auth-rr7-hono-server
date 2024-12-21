@@ -1,4 +1,4 @@
-import { Form, Link, useNavigate } from "react-router";
+import { Form, Link, useNavigate, useSearchParams } from "react-router";
 import { authClient } from "~/lib/auth.client";
 import { GithubIcon } from "~/components/icons";
 import { Input } from "~/components/ui/input";
@@ -8,13 +8,17 @@ import { loginSchema, type LoginSchemaType } from "~/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import type { Route } from "./+types/signin";
-import { AUTHENTICATED_REDIRECT } from "~/utils/constants";
+import { AUTHENTICATED_REDIRECT, REDIRECT_PATH_PARAM } from "~/utils/constants";
+import { generateLinkWithRedirectTo } from "~/utils";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Sign In" }];
 }
 
 export default function SignIn() {
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get(REDIRECT_PATH_PARAM);
+
   const {
     register,
     handleSubmit,
@@ -29,7 +33,7 @@ export default function SignIn() {
   const signIn = async (credentials: LoginSchemaType) => {
     await authClient.signIn.email(credentials, {
       onSuccess: (ctx) => {
-        navigate(AUTHENTICATED_REDIRECT);
+        navigate(redirectTo || AUTHENTICATED_REDIRECT);
       },
       onError: (ctx) => {
         toast.error(ctx.error.message);
@@ -40,10 +44,10 @@ export default function SignIn() {
   const handleGithubSignIn = async () => {
     await authClient.signIn.social({
       provider: "github",
-      callbackURL: AUTHENTICATED_REDIRECT,
+      callbackURL: redirectTo || AUTHENTICATED_REDIRECT,
       fetchOptions: {
         onSuccess: (ctx) => {
-          navigate(AUTHENTICATED_REDIRECT);
+          navigate(redirectTo || AUTHENTICATED_REDIRECT);
         },
         onError: (ctx) => {
           toast.error(ctx.error.message);
@@ -101,7 +105,7 @@ export default function SignIn() {
           sign in
         </Button>
         <div className="mt-4 flex justify-end">
-          <Link to="/" className="font-medium">
+          <Link to="#" className="font-medium">
             Forgot password
           </Link>
         </div>
@@ -116,7 +120,10 @@ export default function SignIn() {
         </Button>
         <p className="mt-4 text-center font-normal text-gray-600">
           Not registered?{" "}
-          <Link to="/signup" className="font-medium text-gray-900">
+          <Link
+            to={generateLinkWithRedirectTo("/signup", redirectTo)}
+            className="font-medium text-gray-900"
+          >
             Create account
           </Link>
         </p>
