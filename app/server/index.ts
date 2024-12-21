@@ -3,6 +3,7 @@ import populateSession, {
   type SessionVariables,
 } from "./middlewares/populate-session";
 import type { AppBindings } from "./types";
+import { protect } from "./middlewares/auth-guards";
 
 /**
  * Declare our loaders and actions context type
@@ -22,6 +23,11 @@ export default await createHonoServer<AppBindings>({
      *  NOTE: Always put it first
      */
     server.use(populateSession);
+
+    /**
+     * Add auth guards
+     */
+    server.use(protect({ publicPaths: ["/", "/signin", "/signup"] }));
   },
   getLoadContext(ctx) {
     return {
