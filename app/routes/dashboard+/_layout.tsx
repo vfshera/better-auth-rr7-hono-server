@@ -1,13 +1,13 @@
+import type { Route } from "./+types/_layout";
 import { Link, Outlet, useNavigate } from "react-router";
+import { requireAuth } from "~/.server/auth/utils";
+import { authClient } from "~/lib/auth.client";
 import {
-  Calendar,
-  ChevronUp,
-  Home,
-  Inbox,
-  Search,
-  Settings,
-  User2,
-} from "lucide-react";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -20,16 +20,8 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "~/components/ui/sidebar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import type { Route } from "./+types/_layout";
-import { requireAuth } from "~/.server/auth/utils";
-import { authClient } from "~/lib/auth.client";
 import { SIGNOUT_REDIRECT } from "~/utils/constants";
+import { Calendar, ChevronUp, Home, Inbox, Search, Settings, User2 } from "lucide-react";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const { user } = await requireAuth(request);
@@ -65,9 +57,8 @@ const items = [
     icon: Settings,
   },
 ];
-export default function DashboardLayout({
-  loaderData: { user },
-}: Route.ComponentProps) {
+
+export default function DashboardLayout({ loaderData: { user } }: Route.ComponentProps) {
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -79,9 +70,10 @@ export default function DashboardLayout({
       },
     });
   }
+
   return (
     <SidebarProvider>
-      <div className="flex  w-full">
+      <div className="flex w-full">
         <Sidebar>
           <SidebarContent>
             <SidebarGroup>
@@ -118,19 +110,14 @@ export default function DashboardLayout({
                       <ChevronUp className="ml-auto" />
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    side="top"
-                    className="w-[--radix-popper-anchor-width]"
-                  >
-                    <DropdownMenuItem
-                      onClick={() => navigate("/dashboard/account")}
-                    >
+                  <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
+                    <DropdownMenuItem onClick={() => navigate("/dashboard/account")}>
                       <span>Account</span>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
                       onClick={handleLogout}
-                      className="hover:bg-red-600 hover:text-white text-red-600 transition-colors"
+                      className="text-red-600 transition-colors hover:bg-red-600 hover:text-white"
                     >
                       <span>Sign out</span>
                     </DropdownMenuItem>

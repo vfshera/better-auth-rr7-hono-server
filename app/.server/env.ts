@@ -1,8 +1,6 @@
-/* eslint-disable no-console */
 import Table from "cli-table3";
 import { config } from "dotenv";
 import { expand } from "dotenv-expand";
-
 import { z } from "zod";
 
 const stringBoolean = z.coerce
@@ -14,9 +12,7 @@ const stringBoolean = z.coerce
 
 const EnvSchema = z
   .object({
-    NODE_ENV: z
-      .enum(["development", "production", "test"])
-      .default("development"),
+    NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
     DB_MIGRATING: stringBoolean,
     BETTER_AUTH_SECRET: z.string().min(1),
     BETTER_AUTH_URL: z.string().min(1),
@@ -48,6 +44,7 @@ if (error) {
       table.push([key, value.map((v) => `\u00B7 ${v}`).join("\n")]);
     }
   }
+
   console.error("❌ Invalid env:");
   console.log(table.toString());
   process.exit(1);

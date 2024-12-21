@@ -2,14 +2,10 @@
  * Auth guards middleware
  * @see - https://github.com/Shelf-nu/shelf.nu/blob/main/server/middleware.ts
  */
-
+import { REDIRECT_PATH_PARAM, UNAUTHENTICATED_REDIRECT } from "~/utils/constants";
+import type { AppBindings } from "../types";
 import { createMiddleware } from "hono/factory";
 import { pathToRegexp } from "path-to-regexp";
-import type { AppBindings } from "../types";
-import {
-  REDIRECT_PATH_PARAM,
-  UNAUTHENTICATED_REDIRECT,
-} from "~/utils/constants";
 
 function pathMatch(paths: string[], requestPath: string) {
   for (const path of paths) {
@@ -48,10 +44,9 @@ export function protect({
 
     if (!isAuthenticated) {
       const url = new URL(ctx.req.url);
+
       return ctx.redirect(
-        `${onFailRedirectTo}?${REDIRECT_PATH_PARAM}=${encodeURI(
-          url.pathname + url.search
-        )}`
+        `${onFailRedirectTo}?${REDIRECT_PATH_PARAM}=${encodeURI(url.pathname + url.search)}`,
       );
     }
 

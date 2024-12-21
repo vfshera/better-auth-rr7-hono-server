@@ -1,9 +1,7 @@
-import { createHonoServer } from "react-router-hono-server/node";
-import populateSession, {
-  type SessionVariables,
-} from "./middlewares/populate-session";
-import type { AppBindings } from "./types";
 import { protect } from "./middlewares/auth-guards";
+import populateSession, { type SessionVariables } from "./middlewares/populate-session";
+import type { AppBindings } from "./types";
+import { createHonoServer } from "react-router-hono-server/node";
 
 /**
  * Declare our loaders and actions context type
@@ -34,7 +32,7 @@ export default await createHonoServer<AppBindings>({
           "/dashboard",
           "/dashboard/*path", // *path is a wildcard that will match any path after /dashboard
         ],
-      })
+      }),
     );
   },
   getLoadContext(ctx) {

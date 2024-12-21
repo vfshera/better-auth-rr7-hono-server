@@ -1,9 +1,8 @@
-import type { Route } from "./+types/index";
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [{ title: "Dashboard" }];
 }
 
-export default function Dashboard(props: Route.ComponentProps) {
+export default function Dashboard() {
   return (
     <div className="p-5">
       <h1 className="text-2xl font-semibold">Dashboard</h1>

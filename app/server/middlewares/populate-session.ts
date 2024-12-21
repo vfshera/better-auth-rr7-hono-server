@@ -1,10 +1,9 @@
 /**
  *  Ensure this is the first middleware
  */
-
-import { createMiddleware } from "hono/factory";
 import { auth } from "~/.server/auth";
 import type { AppBindings } from "../types";
+import { createMiddleware } from "hono/factory";
 
 export type SessionVariables = {
   user: typeof auth.$Infer.Session.user | null;
