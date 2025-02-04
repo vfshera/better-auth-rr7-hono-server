@@ -110,7 +110,7 @@ export default function DashboardLayout({ loaderData: { user } }: Route.Componen
                       <ChevronUp className="ml-auto" />
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
+                  <DropdownMenuContent side="top" className="w-(--radix-popper-anchor-width)">
                     <DropdownMenuItem onClick={() => navigate("/dashboard/account")}>
                       <span>Account</span>
                     </DropdownMenuItem>
