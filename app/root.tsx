@@ -6,8 +6,10 @@ import {
   Scripts,
   ScrollRestoration,
   isRouteErrorResponse,
+  redirect,
 } from "react-router";
 import stylesheet from "./app.css?url";
+import { appContext } from "$/server/context";
 import { Toaster } from "sonner";
 
 export const links: Route.LinksFunction = () => [
@@ -23,6 +25,36 @@ export const links: Route.LinksFunction = () => [
   },
   { rel: "stylesheet", href: stylesheet },
 ];
+
+export const middleware: Route.MiddlewareFunction[] = [
+  async ({ context, request }) => {
+    const url = new URL(request.url);
+
+    const { session } = context.get(appContext);
+
+    if (["/login", "/register"].includes(url.pathname) && session) {
+      throw redirect("/dashboard");
+    }
+
+    if (
+      (url.pathname.startsWith("/dashboard") || url.pathname.startsWith("/protected")) &&
+      !session
+    ) {
+      throw redirect("/login");
+    }
+  },
+];
+
+export async function loader({ context }: Route.LoaderArgs) {
+  const { clientEnv, isAuthenticated, user, session } = context.get(appContext);
+
+  return {
+    clientEnv,
+    isAuthenticated,
+    user,
+    session,
+  };
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -43,8 +75,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  return <Outlet />;
+export default function App({ loaderData: { clientEnv } }: Route.ComponentProps) {
+  return (
+    <>
+      <Outlet />;
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.ENV = ${JSON.stringify(clientEnv)}`,
+        }}
+      ></script>
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
