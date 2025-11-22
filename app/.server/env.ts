@@ -1,19 +1,48 @@
-import Table from "cli-table3";
 import { config } from "dotenv";
 import { expand } from "dotenv-expand";
-import { z } from "zod";
+import pc from "picocolors";
+import * as z from "zod";
 
-const stringBoolean = z.coerce
-  .string()
-  .transform((val) => {
-    return val === "true";
-  })
-  .default("false");
+expand(config());
 
-const EnvSchema = z
+export const PUBLIC_ENV_PREFIX = "PUBLIC_";
+
+/**
+ * Load and validate environment variables using a Zod schema.
+ */
+export function loadEnv<T extends z.ZodTypeAny>(schema: T): z.infer<T> {
+  const parsed = schema.safeParse(process.env);
+
+  if (!parsed.success) {
+    const flat = z.flattenError(parsed.error);
+
+    console.log(pc.bold("\n❌ Invalid environment variables:"));
+    for (const [key, messages] of Object.entries(flat)) {
+      console.log(
+        pc.red(
+          `- ${pc.bold(key)}: ${pc.italic(
+            Array.isArray(messages)
+              ? messages.join(", ")
+              : (JSON.stringify(messages) ?? "Unknown error"),
+          )}`,
+        ),
+      );
+    }
+
+    console.log();
+    process.exit(1);
+  }
+
+  return parsed.data;
+}
+
+const envSchema = z
   .object({
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-    DB_MIGRATING: stringBoolean,
+    DB_MIGRATING: z
+      .string()
+      .default("false")
+      .transform((val) => val === "true"),
     BETTER_AUTH_SECRET: z.string().min(1),
     BETTER_AUTH_URL: z.string().min(1),
     GITHUB_CLIENT_ID: z.string().min(1),
@@ -28,26 +57,30 @@ const EnvSchema = z
     };
   });
 
-export type EnvSchema = z.infer<typeof EnvSchema>;
+export type Env = z.infer<typeof envSchema>;
 
-expand(config());
+export const env = loadEnv(envSchema);
 
-const { data: env, error } = EnvSchema.safeParse(process.env);
+/**
+ * Extract public env keys.
+ * - the result type keys will be without the `PUBLIC_` prefix
+ */
+type PublicKeys<T> = {
+  [K in keyof T as K extends `PUBLIC_${infer Rest}` ? Rest : never]: T[K];
+};
 
-if (error) {
-  const table = new Table({ head: ["Variable", "Errors"] });
+export type PublicEnv = PublicKeys<Env>;
 
-  const flatErrors = error.flatten().fieldErrors;
+function getPublicEnv(): PublicEnv {
+  const publicEnv: Record<string, unknown> = {};
 
-  for (const [key, value] of Object.entries(flatErrors)) {
-    if (value) {
-      table.push([key, value.map((v) => `\u00B7 ${v}`).join("\n")]);
+  for (const [key, value] of Object.entries(env)) {
+    if (key.startsWith(PUBLIC_ENV_PREFIX)) {
+      publicEnv[key.slice(PUBLIC_ENV_PREFIX.length) as keyof PublicEnv] = value;
     }
   }
 
-  console.error("❌ Invalid env:");
-  console.log(table.toString());
-  process.exit(1);
+  return publicEnv as PublicEnv;
 }
 
-export default env!;
+export const clientEnv: PublicEnv = getPublicEnv();
